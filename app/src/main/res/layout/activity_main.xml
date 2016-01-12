@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.igeek.textcheckgroupview.CheckTextGroupView
+        android:id="@+id/checkTextGroupView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:checkedStrokeColor="@color/colorPrimary"
+        app:checkedTextColor="#009EF2"
+        app:textPaddingLeft="16dp"
+        app:textPaddingRight="16dp"
+        app:textPaddingButtom="12dp"
+        app:textPaddingTop="12dp"
+        app:lineHeight="12dp"
+        app:strokeModel="GONE"
+        app:checkModel="SIMPLE"
+        app:strokeWidth="1px"
+        app:textGapWidth="10dp"
+        app:textSize="16sp"
+        app:unCheckedStrokeColor="@color/colorAccent"
+        app:unCheckedTextColor="#66000000" />
+</LinearLayout>
