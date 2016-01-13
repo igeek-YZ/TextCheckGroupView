@@ -116,6 +116,61 @@
 
 ![image](https://github.com/igeek-YZ/TextCheckGroupView/blob/master/gifs/simple_icon_gone_Stroke.gif )  
 
+#### 属性说明
+	<declare-styleable name="CheckTextGroupView">
+        <!--文本字体大小-->
+        <attr name="textSize" format="dimension|reference"/>
+        <!-- 文本距离边框的填充间距 -->
+        <attr name="textPadding" format="dimension|reference"/>
+        <!-- 文本距离边框的左填充间距 -->
+        <attr name="textPaddingLeft" format="dimension|reference"/>
+        <!-- 文本距离边框的上填充间距 -->
+        <attr name="textPaddingTop" format="dimension|reference"/>
+        <!-- 文本距离边框的右填充间距 -->
+        <attr name="textPaddingRight" format="dimension|reference"/>
+        <!-- 文本距离边框的底部填充间距 -->
+        <attr name="textPaddingButtom" format="dimension|reference"/>
+        <!-- 文本之间的间隔距离 -->
+        <attr name="textGapWidth" format="dimension|reference"/>
+        <!-- 换行的行高间距 -->
+        <attr name="lineHeight" format="dimension|reference"/>
+        <!-- 选中状态的颜色 -->
+        <attr name="checkedTextColor" format="color|reference"/>
+        <!-- 未选中状态的颜色(默认) -->
+        <attr name="unCheckedTextColor" format="color|reference"/>
+        <!-- 选中边框颜色 -->
+        <attr name="checkedStrokeColor" format="color|reference"/>
+        <!-- 未选中边框颜色(默认) -->
+        <attr name="unCheckedStrokeColor" format="color|reference"/>
+        <!-- 边框宽度 -->
+        <attr name="strokeWidth" format="dimension|reference"/>
+        <!-- 选中的图标 -->
+        <attr name="checkedDrawable" format="reference|color"/>
+        <!-- 默认的图标 -->
+        <attr name="unCheckedDrawable" format="reference|color"/>
+        <!-- 图标的宽度 -->
+        <attr name="drawTextGapWidth" format="reference|dimension"/>
+        <!-- 图标的高度 -->
+        <attr name="drawableHeight" format="reference|dimension"/>
+        <!-- 图标与文本之间的间距 -->
+        <attr name="drawableWidth" format="reference|dimension"/>
+        <!-- 用户出发模式 -->
+        <attr name="checkModel">
+            <!-- 单选 -->
+            <enum name="SIMPLE" value="4"/>
+            <!-- 多选 -->
+            <enum name="MULTI" value="5"/>
+        </attr>
+        <attr name="strokeModel">
+            <!--默认和选中都显示边框-->
+            <enum name="STROKE" value="1"/>
+            <!--默认隐藏边框,选中显示边框-->
+            <enum name="GONE_STROKE" value="2"/>
+            <!--默认和选中都隐藏边框-->
+            <enum name="GONE" value="3"/>
+        </attr>
+    </declare-styleable>
+
 #### 联系方式 (如遇bug可通过以下联系方式联系我)
 
 微信号：igeekcoder  
