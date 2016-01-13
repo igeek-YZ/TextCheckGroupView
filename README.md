@@ -8,6 +8,9 @@
 
 * 流动布局，每一行的显示个数可根据显示的数据和屏幕的宽度自适应换行  
 
+`class CheckTextGroupView extends View`  
+
+
 代码和效果说明：mainActivity  
 	CheckTextGroupView checkTextGroupView;
 
@@ -81,8 +84,8 @@
 
 ![image](https://github.com/igeek-YZ/TextCheckGroupView/blob/master/gifs/simple_gone_Stroke.gif )  
 
- #### 选中边框多选模式
- ![image](https://github.com/igeek-YZ/TextCheckGroupView/blob/master/gifs/mulit_gone_Stroke.gif )
+#### 选中边框多选模式
+![image](https://github.com/igeek-YZ/TextCheckGroupView/blob/master/gifs/mulit_gone_Stroke.gif )
 
 #### 选中边框带图标单选模式(多选修改*app:checkModel="MULTI"*) 
 
