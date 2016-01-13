@@ -31,7 +31,7 @@
         return list;
     }
   
-
+## 这里列出几种常用的模式,更多拼凑的模式你可以慢慢尝试下
 #### 无边框单选模式
 
 	<com.igeek.textcheckgroupview.CheckTextGroupView
@@ -51,6 +51,8 @@
         app:textSize="16sp"
         app:unCheckedTextColor="@color/black_overlay" />
 
+
+![image](https://github.com/igeek-YZ/TextCheckGroupView/blob/master/gifs/simple_gone.gif )  
 
 
 
@@ -77,6 +79,10 @@
         app:unCheckedStrokeColor="@color/gray_efeff4"
         app:unCheckedTextColor="@color/black_overlay" />
 
+![image](https://github.com/igeek-YZ/TextCheckGroupView/blob/master/gifs/simple_gone_Stroke.gif )  
+
+ #### 选中边框多选模式
+ ![image](https://github.com/igeek-YZ/TextCheckGroupView/blob/master/gifs/mulit_gone_Stroke.gif )
 
 #### 选中边框带图标单选模式(多选修改*app:checkModel="MULTI"*) 
 
@@ -104,3 +110,13 @@
         app:unCheckedStrokeColor="@color/gray_efeff4"
         app:unCheckedTextColor="@color/black_overlay" />
 
+
+![image](https://github.com/igeek-YZ/TextCheckGroupView/blob/master/gifs/simple_icon_gone_Stroke.gif )  
+
+#### 联系方式 (如遇bug可通过以下联系方式联系我)
+
+微信号：igeekcoder  
+
+邮箱：igeek2014@hotmail.com  
+
+谢谢您的浏览%>_<%
