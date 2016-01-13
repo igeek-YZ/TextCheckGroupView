@@ -33,7 +33,9 @@
   
 
 #### 无边框单选模式
-`	<com.igeek.textcheckgroupview.CheckTextGroupView
+
+`	
+	<com.igeek.textcheckgroupview.CheckTextGroupView
         android:id="@+id/checkTextGroupView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,7 +50,10 @@
         app:strokeWidth="1px"
         app:textGapWidth="10dp"
         app:textSize="16sp"
-        app:unCheckedTextColor="@color/black_overlay" />`
+        app:unCheckedTextColor="@color/black_overlay" />
+
+`
+
 
 **多选模式**只需要修改***app:checkModel="SIMPLE"***为***app:checkModel="MULTI"*** 即可  
 
