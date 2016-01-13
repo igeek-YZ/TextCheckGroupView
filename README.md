@@ -57,7 +57,8 @@
 **多选模式**只需要修改***app:checkModel="SIMPLE"***为***app:checkModel="MULTI"*** 即可  
 
 #### 选中边框单选模式(多选修改*app:checkModel="MULTI"*)  
-`	    <com.igeek.textcheckgroupview.CheckTextGroupView
+
+	<com.igeek.textcheckgroupview.CheckTextGroupView
         android:id="@+id/checkTextGroupView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,11 +76,11 @@
         app:textSize="16sp"
         app:unCheckedStrokeColor="@color/gray_efeff4"
         app:unCheckedTextColor="@color/black_overlay" />
-`
+
 
 #### 选中边框带图标单选模式(多选修改*app:checkModel="MULTI"*) 
 
-`		<com.igeek.textcheckgroupview.CheckTextGroupView
+	<com.igeek.textcheckgroupview.CheckTextGroupView
         android:id="@+id/checkTextGroupView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -102,4 +103,4 @@
         app:checkedDrawable="@mipmap/ic_radio_btn_checked_black_24dp"
         app:unCheckedStrokeColor="@color/gray_efeff4"
         app:unCheckedTextColor="@color/black_overlay" />
-`
+
