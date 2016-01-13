@@ -9,7 +9,7 @@
 * 流动布局，每一行的显示个数可根据显示的数据和屏幕的宽度自适应换行  
 
 代码和效果说明：mainActivity  
-`CheckTextGroupView checkTextGroupView;
+	CheckTextGroupView checkTextGroupView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,7 @@
         }
 
         return list;
-    }`
+    }
   
 
 #### 无边框单选模式
