@@ -154,7 +154,7 @@
         <attr name="drawableHeight" format="reference|dimension"/>
         <!-- 图标与文本之间的间距 -->
         <attr name="drawableWidth" format="reference|dimension"/>
-        <!-- 用户出发模式 -->
+        <!-- 用户触发模式 -->
         <attr name="checkModel">
             <!-- 单选 -->
             <enum name="SIMPLE" value="4"/>
