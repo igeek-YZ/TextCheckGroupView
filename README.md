@@ -4,7 +4,7 @@
 主要特点：
 * 可用作显示给用户单选或者多选；  
 
-* 可自定义显示的模式：无边框，有边框，有图标和隐藏图标集中组合模式  
+* 可自定义显示的模式：无边框，有边框，有图标和隐藏图标几种组合模式  
 
 * 流动布局，每一行的显示个数可根据显示的数据和屏幕的宽度自适应换行  
 
@@ -34,7 +34,6 @@
 
 #### 无边框单选模式
 
-`	
 	<com.igeek.textcheckgroupview.CheckTextGroupView
         android:id="@+id/checkTextGroupView"
         android:layout_width="match_parent"
@@ -52,7 +51,7 @@
         app:textSize="16sp"
         app:unCheckedTextColor="@color/black_overlay" />
 
-`
+
 
 
 **多选模式**只需要修改***app:checkModel="SIMPLE"***为***app:checkModel="MULTI"*** 即可  
