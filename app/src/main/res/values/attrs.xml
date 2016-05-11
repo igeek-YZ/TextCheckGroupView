@@ -20,17 +20,22 @@
         <attr name="drawTextGapWidth" format="reference|dimension"/>
         <attr name="drawableHeight" format="reference|dimension"/>
         <attr name="drawableWidth" format="reference|dimension"/>
+        <attr name="tagRadius" format="reference|dimension"/>
         <attr name="checkModel">
-            <enum name="SIMPLE" value="4"/>
-            <enum name="MULTI" value="5"/>
+            <enum name="SIMPLE" value="6"/>
+            <enum name="MULTI" value="7"/>
         </attr>
         <attr name="strokeModel">
             <!--默认和选中都显示边框-->
             <enum name="STROKE" value="1"/>
             <!--默认隐藏边框,选中显示边框-->
             <enum name="GONE_STROKE" value="2"/>
+            <!--默认显示边框,选中显示填充和边框-->
+            <enum name="STROKE_FILL" value="3"/>
+            <!--默认和选中都显示填充和边框-->
+            <enum name="FILL_FILL" value="4"/>
             <!--默认和选中都隐藏边框-->
-            <enum name="GONE" value="3"/>
+            <enum name="GONE" value="5"/>
         </attr>
     </declare-styleable>
 

@@ -9,6 +9,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Looper;
 import android.util.AttributeSet;
@@ -29,13 +30,13 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
 
     //文本字体大小
     private int textSize;
-    //未选中状态的颜色(默认)
+    //未选中状态文本的颜色(默认)
     private int checkedTextColor;
-    //选中状态的颜色
+    //选中状态文本的颜色
     private int unCheckedTextColor;
-    //选中边框颜色
+    //选中边框填充颜色
     private int checkedStrokeColor;
-    //未选中边框颜色(默认)
+    //未选中边框填充颜色(默认)
     private int unCheckedStrokeColor;
     //文本之间的间隔距离
     private int textGapWidth;
@@ -49,6 +50,8 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     private int drawableHeight;
     //图标与文本之间的间距
     private int drawTextGapWidth;
+    //圆角半径
+    private int tagRadius;
 
     //文本距离边框的填充间距
     private int textPadding;
@@ -66,14 +69,18 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     private static final int STROKE=1;
     //默认隐藏边框,选中显示边框
     private static final int GONE_STROKE=2;
+    //默认显示边框,选中显示填充和边框
+    private static final int STROKE_FILL=3;
+    //默认和选中都显示填充和边框
+    private static final int FILL_FILL=4;
     //默认和选中都隐藏边框
-    private static final int GONE=3;
+    private static final int GONE=5;
 
     //单选
-    private static final int SIMPLE=4;
+    private static final int SIMPLE=6;
 
     //多选
-    private static final int MULTI=5;
+    private static final int MULTI=7;
 
     //边框显示模式
     private int strokeModel;
@@ -134,6 +141,7 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
         }
 
         textSize =ta.getDimensionPixelSize(R.styleable.CheckTextGroupView_textSize,14);
+        tagRadius =ta.getDimensionPixelSize(R.styleable.CheckTextGroupView_tagRadius,10);
         textGapWidth =ta.getDimensionPixelSize(R.styleable.CheckTextGroupView_textGapWidth,0);
         lineHeight=ta.getDimensionPixelSize(R.styleable.CheckTextGroupView_lineHeight,0);
         strokeWidth=ta.getDimensionPixelSize(R.styleable.CheckTextGroupView_strokeWidth,0);
@@ -189,8 +197,9 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     public boolean onTouch(View v, MotionEvent event) {
         lasterDownX= (int) event.getX();
         lasterDownY= (int) event.getY();
-        updateTextChecked(lasterDownX,lasterDownY,event.getAction());
-        return checkTexts.size()>0;
+        if(isEnabled())
+            updateTextChecked(lasterDownX,lasterDownY,event.getAction());
+        return checkTexts.size()>0&&isEnabled();
     }
 
     /**
@@ -322,41 +331,85 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     protected void onDraw(Canvas canvas) {
 
         for(CheckText text: checkTexts){
-            Rect targetRect=new Rect();
+            drawTextBg(canvas,text);
+            drawText(canvas,text);
+            drawIcon(canvas,text);
+        }
+    }
 
-            targetRect.left=text.getCenterX()-text.getWidth()/2+drawableWidth+drawTextGapWidth+textPaddingLeft;
-            targetRect.top=text.getCenterY()-text.getHeight()/2+textPaddingTop;
-            targetRect.right=text.getCenterX()+text.getWidth()/2-textPaddingRight;
-            targetRect.bottom=text.getCenterY()+text.getHeight()/2-textPaddingButtom;
 
-            textPaint.setColor(text.isChecked()?checkedTextColor:unCheckedTextColor);
-            Paint.FontMetricsInt fontMetrics = textPaint.getFontMetricsInt();
-            int baseline = (targetRect.bottom + targetRect.top - fontMetrics.bottom - fontMetrics.top) / 2;
-            // 实现水平居中，drawText对应改为传入targetRect.centerX(),也可以不设置，默认为left,自己计算
-            textPaint.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText(text.getText(), targetRect.centerX(), baseline, textPaint);
+    /**
+     * 绘制文本的背景
+     * @param canvas
+     * @param text
+     */
+    public void drawTextBg(Canvas canvas,CheckText text){
 
-            targetRect.left=text.getCenterX()-text.getWidth()/2;
-            targetRect.top=text.getCenterY()-text.getHeight()/2;
-            targetRect.right=text.getCenterX()+text.getWidth()/2;
-            targetRect.bottom=text.getCenterY()+text.getHeight()/2;
+        RectF strokeRectf=new RectF();
+        strokeRectf.left=text.getCenterX()-text.getWidth()/2;
+        strokeRectf.top=text.getCenterY()-text.getHeight()/2;
+        strokeRectf.right=text.getCenterX()+text.getWidth()/2;
+        strokeRectf.bottom=text.getCenterY()+text.getHeight()/2;
 
-            //检查是否画边框
-            if(strokeModel==STROKE){
-                strokePaint.setColor(text.isChecked()?checkedStrokeColor:unCheckedStrokeColor);
-                canvas.drawRect(targetRect,strokePaint);
-            }else if(strokeModel==GONE_STROKE){
-                if(text.isChecked()){
-                    strokePaint.setColor(checkedStrokeColor);
-                    canvas.drawRect(targetRect,strokePaint);
-                }
+        //检查是否画边框
+        if(strokeModel==STROKE){
+            strokePaint.setStyle(Paint.Style.STROKE);
+            strokePaint.setColor(text.isChecked()?checkedStrokeColor:unCheckedStrokeColor);
+            canvas.drawRoundRect(strokeRectf,tagRadius,tagRadius,strokePaint);
+        }else if(strokeModel==GONE_STROKE){
+            if(text.isChecked()){
+                strokePaint.setStyle(Paint.Style.STROKE);
+                strokePaint.setColor(checkedStrokeColor);
+                canvas.drawRoundRect(strokeRectf,tagRadius,tagRadius,strokePaint);
             }
-
-            if(checkedDrawable!=null&&unCheckedDrawable!=null){
-                Drawable drawable = text.isChecked() ? checkedDrawable : unCheckedDrawable;
-                Bitmap bitmap = drawabletoZoomBitmap(drawable, drawableWidth, drawableHeight);
-                canvas.drawBitmap(bitmap,text.getCenterX()-text.getWidth()/2+textPaddingLeft,text.getCenterY()-drawableHeight/2,null);
+        }else if(strokeModel==STROKE_FILL){
+            if(!text.isChecked()){
+                strokePaint.setStyle(Paint.Style.STROKE);
+                strokePaint.setColor(unCheckedStrokeColor);
+                canvas.drawRoundRect(strokeRectf,tagRadius,tagRadius,strokePaint);
+            }else{
+                strokePaint.setStyle(Paint.Style.FILL_AND_STROKE);
+                strokePaint.setColor(checkedStrokeColor);
+                canvas.drawRoundRect(strokeRectf,tagRadius,tagRadius,strokePaint);
             }
+        }else if(strokeModel==FILL_FILL){
+            strokePaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            if(!text.isChecked()){
+                strokePaint.setColor(unCheckedStrokeColor);
+                canvas.drawRoundRect(strokeRectf,tagRadius,tagRadius,strokePaint);
+            }else{
+                strokePaint.setColor(checkedStrokeColor);
+                canvas.drawRoundRect(strokeRectf,tagRadius,tagRadius,strokePaint);
+            }
+        }
+    }
+
+    /**
+     * 绘制文本
+     * @param canvas
+     * @param text
+     */
+    public void drawText(Canvas canvas,CheckText text){
+        Rect targetRect=new Rect();
+        targetRect.left=text.getCenterX()-text.getWidth()/2+drawableWidth+drawTextGapWidth+textPaddingLeft;
+        targetRect.top=text.getCenterY()-text.getHeight()/2+textPaddingTop;
+        targetRect.right=text.getCenterX()+text.getWidth()/2-textPaddingRight;
+        targetRect.bottom=text.getCenterY()+text.getHeight()/2-textPaddingButtom;
+
+        textPaint.setColor(text.isChecked()?checkedTextColor:unCheckedTextColor);
+        Paint.FontMetricsInt fontMetrics = textPaint.getFontMetricsInt();
+        int baseline = (targetRect.bottom + targetRect.top - fontMetrics.bottom - fontMetrics.top) / 2;
+        // 实现水平居中，drawText对应改为传入targetRect.centerX(),也可以不设置，默认为left,自己计算
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(text.getText(), targetRect.centerX(), baseline, textPaint);
+    }
+
+
+    public void drawIcon(Canvas canvas,CheckText text){
+        if(checkedDrawable!=null&&unCheckedDrawable!=null){
+            Drawable drawable = text.isChecked() ? checkedDrawable : unCheckedDrawable;
+            Bitmap bitmap = drawabletoZoomBitmap(drawable, drawableWidth, drawableHeight);
+            canvas.drawBitmap(bitmap,text.getCenterX()-text.getWidth()/2+textPaddingLeft,text.getCenterY()-drawableHeight/2,null);
         }
     }
 
@@ -383,6 +436,8 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     }
 
     static class CheckText {
+        //位置
+        private int index;
         //中心X坐标
         private int centerX;
         //中心Y坐标
@@ -461,18 +516,14 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
             return inX&&inY;
         }
 
-        @Override
-        public String toString() {
-            return "CheckText{" +
-                    "centerX=" + centerX +
-                    ", centerY=" + centerY +
-                    ", width=" + width +
-                    ", height=" + height +
-                    ", text='" + text + '\'' +
-                    ", textSize=" + textSize +
-                    ", isChecked=" + isChecked +
-                    '}';
+        public int getIndex() {
+            return index;
         }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
     }
 
     public CheckTextCheckedChangeListener getListener() {
