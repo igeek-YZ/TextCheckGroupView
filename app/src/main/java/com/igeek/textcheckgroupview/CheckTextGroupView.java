@@ -52,6 +52,8 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     private int drawTextGapWidth;
     //圆角半径
     private int tagRadius;
+    //最多选择的个数
+    private int maxCheckSize;
 
     //文本距离边框的填充间距
     private int textPadding;
@@ -178,14 +180,13 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
         int heightModel=MeasureSpec.getMode(heightMeasureSpec);
         int width=MeasureSpec.getSize(widthMeasureSpec);
-        if(heightModel==MeasureSpec.AT_MOST){
-            heightMeasureSpec=MeasureSpec.makeMeasureSpec(mesureHeightByWithLayout(width),MeasureSpec.AT_MOST);
-        }
+        heightMeasureSpec=MeasureSpec.makeMeasureSpec(mesureHeightByWithLayout(width),MeasureSpec.AT_MOST);
         setMeasuredDimension(widthMeasureSpec,heightMeasureSpec);
     }
+
+
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -208,11 +209,10 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
      * @param touchY 触摸的Y坐标
      */
     public synchronized boolean updateTextChecked(int touchX,int touchY,int action){
-        int serachIndex=-1;
         boolean hasExchange=false;
+        int curIndex=-1;
         for(int index=0;index<checkTexts.size();index++){
-            serachIndex=index;
-            CheckText text=checkTexts.get(serachIndex);
+            CheckText text=checkTexts.get(index);
             if(text.inRange(touchX,touchY)){
                 switch (action){
                     case  MotionEvent.ACTION_DOWN:
@@ -222,8 +222,10 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
                                 cleanRadioChecked();
                             checkeds.put(index,text);
                             hasExchange=true;
+                            curIndex=index;
                             downCheckedIndex=-1;
                         }else{
+                            curIndex=-1;
                             downCheckedIndex=index;
                         }
                         break;
@@ -233,7 +235,10 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
                             if(checkModel==SIMPLE)
                                 cleanRadioChecked();
                             checkeds.put(index,text);
+                            curIndex=index;
                             hasExchange=true;
+                        }else{
+                            curIndex=-1;
                         }
                         break;
                     case  MotionEvent.ACTION_UP:
@@ -248,13 +253,35 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
                 }
             }
         }
+
+        if(checkeds.size()>maxCheckSize&&curIndex!=-1){
+            checkTexts.get(curIndex).setChecked(false);
+            checkeds.delete(curIndex);
+        }
+
         if(hasExchange){
             requestInvalidate();
         }
 
         if(listener!=null&&hasExchange)
-            listener.onCheckedChange(this,serachIndex);
+            listener.onCheckedChange(this,collectCheckedTexts());
         return hasExchange;
+    }
+
+    public void inTouch(){
+
+    }
+
+    public List<String> collectCheckedTexts(){
+        if(checkeds.size()==0){
+            return null;
+        }
+        List<String> list=new ArrayList<String>();
+        for(int index=0;index<checkeds.size();index++){
+            CheckText check=checkeds.valueAt(index);
+            list.add(check.getText());
+        }
+        return list;
     }
 
 
@@ -270,10 +297,15 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     /**
      * 重新计算每个文本的位置
      */
-    public int mesureHeightByWithLayout(int width){
+    public synchronized int mesureHeightByWithLayout(int width){
+
+        //计算所有文本中的最大高度
+        int maxHeight=computerMaxTextHeight();
 
         //上一次换行停留的位置index
         int priorColIndex=0;
+        //上一行停留的位置
+        int priorRawXPosion=0;
         //当前最新的行数
         int curRow=0;
         //开始计算每个文本的位置和宽高
@@ -281,27 +313,45 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
             CheckText text= checkTexts.get(index);
             Rect rect=new Rect();
             textPaint.getTextBounds(text.getText(),0,text.getText().length(),rect);
+            text.setTextWidth(rect.width());
+            text.setTextHeight(maxHeight);
             text.setWidth(rect.width()+textPaddingLeft+textPaddingRight+drawableWidth+drawTextGapWidth);
-            if(drawableHeight<rect.height()+textPaddingButtom+textPaddingTop)
-                text.setHeight(rect.height()+textPaddingButtom+textPaddingTop);
+            if(drawableHeight<maxHeight+textPaddingButtom+textPaddingTop)
+                text.setHeight(maxHeight+textPaddingButtom+textPaddingTop);
             else
                 text.setHeight(drawableHeight);
             //判断总长度是否超过了view的宽度,超过则自动换行
             int colWidth=curTextColWidth(index,priorColIndex);
             if(colWidth>width-getPaddingRight()){
                 curRow++;
+                priorRawXPosion+=checkTexts.get(priorColIndex).getHeight();
                 colWidth=text.getWidth()+getPaddingLeft();
                 priorColIndex=index;
             }
-            computerPosition(curRow,colWidth,text);
+            text.setCenterX(colWidth-text.getWidth()/2);
+            text.setCenterY(getPaddingTop()+priorRawXPosion+text.getHeight()/2+curRow*lineHeight);
+            //computerPosition(curRow,colWidth,text);
         }
 
         if(checkTexts.size()==0){
             return 0;
         }else{
             CheckText checkText=checkTexts.get(checkTexts.size()-1);
-            return checkText.getCenterY()+checkText.getHeight()/2+getPaddingTop()+getPaddingBottom();
+            return checkText.getCenterY()+checkText.getHeight()/2+getPaddingBottom();
         }
+    }
+
+    //计算文本的最大高度
+    public int computerMaxTextHeight(){
+        int maxheight=0;
+        for(CheckText text:checkTexts){
+            Rect rect=new Rect();
+            textPaint.getTextBounds(text.getText(),0,text.getText().length(),rect);
+            if(maxheight<rect.height()){
+                maxheight=rect.height();
+            }
+        }
+        return maxheight;
     }
 
     /**
@@ -318,15 +368,15 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
         return colWidth+getPaddingLeft()+(targetIndex-priorColIndex)* textGapWidth;
     }
 
-    /**
-     * 重置每个文本在view当中的位置的和宽高
-     * @param rowIndex 所在的行位置
-     * @param text 文本对象
-     */
-    public void computerPosition(int rowIndex,int colWidth,CheckText text){
-        text.setCenterX(getPaddingLeft()+colWidth-text.getWidth()/2);
-        text.setCenterY(getPaddingTop()+rowIndex*lineHeight+rowIndex*text.getHeight()+text.getHeight()/2);
-    }
+//    /**
+//     * 重置每个文本在view当中的位置的和宽高
+//     * @param rowIndex 所在的行下标
+//     * @param text 文本对象
+//     */
+//    public void computerPosition(int rowIndex,int colWidth,CheckText text){
+//        text.setCenterX(colWidth-text.getWidth()/2);
+//        text.setCenterY(getPaddingTop()+rowIndex*lineHeight+rowIndex*text.getHeight()+text.getHeight()/2);
+//    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -347,10 +397,15 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     public void drawTextBg(Canvas canvas,CheckText text){
 
         RectF strokeRectf=new RectF();
-        strokeRectf.left=text.getCenterX()-text.getWidth()/2;
-        strokeRectf.top=text.getCenterY()-text.getHeight()/2;
-        strokeRectf.right=text.getCenterX()+text.getWidth()/2;
-        strokeRectf.bottom=text.getCenterY()+text.getHeight()/2;
+        final int halfWidth=text.getWidth()/2;
+        final int halfHeight=text.getHeight()/2;
+        strokeRectf.left=text.getCenterX()-halfWidth;
+        strokeRectf.top=text.getCenterY()-halfHeight;
+        strokeRectf.right=text.getCenterX()+halfWidth;
+        strokeRectf.bottom=text.getCenterY()+halfHeight;
+
+        Logger.i("text="+text.getText()+"\ncenterX="+text.getCenterX()+"\ncenterY="+text.getCenterY()
+                +"\nleft="+strokeRectf.left+"\ntop="+strokeRectf.top+"\nright="+strokeRectf.right+"\nbottom="+strokeRectf.bottom);
 
         //检查是否画边框
         if(strokeModel==STROKE){
@@ -392,10 +447,14 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
      */
     public void drawText(Canvas canvas,CheckText text){
         Rect targetRect=new Rect();
-        targetRect.left=text.getCenterX()-text.getWidth()/2+drawableWidth+drawTextGapWidth+textPaddingLeft;
-        targetRect.top=text.getCenterY()-text.getHeight()/2+textPaddingTop;
-        targetRect.right=text.getCenterX()+text.getWidth()/2-textPaddingRight;
-        targetRect.bottom=text.getCenterY()+text.getHeight()/2-textPaddingButtom;
+        final int halfWidth=text.getWidth()/2;
+        final int halfHeight=text.getHeight()/2;
+        targetRect.left=text.getCenterX()+halfWidth-text.getTextWidth()-textPaddingRight;
+        targetRect.top=text.getCenterY()-halfHeight;
+        targetRect.right=text.getCenterX()+halfWidth-textPaddingRight;
+        targetRect.bottom=text.getCenterY()+halfHeight;
+
+
 
         textPaint.setColor(text.isChecked()?checkedTextColor:unCheckedTextColor);
         Paint.FontMetricsInt fontMetrics = textPaint.getFontMetricsInt();
@@ -415,15 +474,36 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     }
 
     public void updateCheckTexts(List<CheckText> checkTexts) {
-        this.checkTexts = checkTexts;
+        this.checkTexts.clear();
+        this.checkTexts.addAll(checkTexts);
         if(checkTexts!=null&&checkTexts.size()>0){
             /**
              * mesure()-->onmesure()-->layout()-->onlayout()-->dispatchDraw()-->Draw()-->onDraw();
              * 重新计算视图的宽高和绘制
              */
+            for(int index=0;index<this.checkTexts.size();index++){
+                CheckText checkText=this.checkTexts.get(index);
+                if(checkText.isChecked)
+                    checkeds.put(index,checkText);
+            }
             requestLayout();
+            //requestInvalidate();
         }
     }
+
+    public void updateTexts(List<String> tagTexts) {
+        if(tagTexts!=null&&tagTexts.size()>0){
+            List<CheckText> tags=new ArrayList<CheckText>();
+            for(String tagText:tagTexts){
+                CheckText tag=new CheckText();
+                tag.setText(tagText);
+                tags.add(tag);
+            }
+            updateCheckTexts(tags);
+        }
+    }
+
+
 
     /**
      * dispatchDraw()-->Draw()-->onDraw();
@@ -436,17 +516,21 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
             postInvalidate();
     }
 
-    static class CheckText {
+    public static class CheckText {
         //位置
         private int index;
         //中心X坐标
         private int centerX;
         //中心Y坐标
         private int centerY;
-        //文本的宽度
+        //视图的宽度
         private int width;
-        //文本的高度
+        //文本的宽度
+        private int textWidth;
+        //视图的高度
         private int height;
+        //文本的高度
+        private int textHeight;
         //文本信息
         private String text;
         //文本字体大小
@@ -525,6 +609,21 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
             this.index = index;
         }
 
+        public int getTextWidth() {
+            return textWidth;
+        }
+
+        public void setTextWidth(int textWidth) {
+            this.textWidth = textWidth;
+        }
+
+        public int getTextHeight() {
+            return textHeight;
+        }
+
+        public void setTextHeight(int textHeight) {
+            this.textHeight = textHeight;
+        }
     }
 
     public CheckTextCheckedChangeListener getListener() {
@@ -536,7 +635,7 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     }
 
     public static interface CheckTextCheckedChangeListener{
-        void onCheckedChange(CheckTextGroupView view, int postion);
+        void onCheckedChange(CheckTextGroupView view, List<String> checkedTexts);
     }
 
     /**
@@ -583,6 +682,22 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
                 drawable.getIntrinsicHeight());
         drawable.draw(canvas);
         return bitmap;
+    }
+
+    public SparseArray<CheckText> getCheckeds() {
+        return checkeds;
+    }
+
+    public List<CheckText> getCheckTexts() {
+        return checkTexts;
+    }
+
+    public int getMaxCheckSize() {
+        return maxCheckSize;
+    }
+
+    public void setMaxCheckSize(int maxCheckSize) {
+        this.maxCheckSize = maxCheckSize;
     }
 
 }

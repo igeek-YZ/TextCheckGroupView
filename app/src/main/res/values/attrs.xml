@@ -2,7 +2,7 @@
 
 
     <declare-styleable name="CheckTextGroupView">
-        <attr name="textSize" format="dimension|reference"/>
+        <attr name="textSize" />
         <attr name="textPadding" format="dimension|reference"/>
         <attr name="textPaddingLeft" format="dimension|reference"/>
         <attr name="textPaddingTop" format="dimension|reference"/>
@@ -14,7 +14,7 @@
         <attr name="unCheckedTextColor" format="color|reference"/>
         <attr name="checkedStrokeColor" format="color|reference"/>
         <attr name="unCheckedStrokeColor" format="color|reference"/>
-        <attr name="strokeWidth" format="dimension|reference"/>
+        <attr name="strokeWidth" />
         <attr name="checkedDrawable" format="reference|color"/>
         <attr name="unCheckedDrawable" format="reference|color"/>
         <attr name="drawTextGapWidth" format="reference|dimension"/>

@@ -1,4 +1,4 @@
-# 一个类似于radioGroup和checkGroup 和流动标签 一体管理的组件
+# 一个类似于radioGroup和checkGroup 和流动标签tagClouds 一体管理的组件
 自定义继承View,可直接放置到listview等的子类视图中  
 
 主要特点：
@@ -7,6 +7,8 @@
 * 可自定义显示的模式：无边框，有边框，有图标和隐藏图标几种组合模式  
 
 * 流动布局，每一行的显示个数可根据显示的数据和屏幕的宽度自适应换行  
+
+* 设置最大选中个数。在流动标签中很实用 
 
 `class CheckTextGroupView extends View`  
 
