@@ -1,4 +1,4 @@
-# 一个类似于radioGroup和checkGroup 管理的组件
+# 一个类似于radioGroup和checkGroup 和流动标签 一体管理的组件
 自定义继承View,可直接放置到listview等的子类视图中  
 
 主要特点：
