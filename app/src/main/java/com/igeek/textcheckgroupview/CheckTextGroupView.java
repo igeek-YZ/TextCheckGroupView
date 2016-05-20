@@ -208,10 +208,11 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
      * @param touchY 触摸的Y坐标
      */
     public synchronized boolean updateTextChecked(int touchX,int touchY,int action){
-        CheckText text=null;
+        int serachIndex=-1;
         boolean hasExchange=false;
         for(int index=0;index<checkTexts.size();index++){
-            text=checkTexts.get(index);
+            serachIndex=index;
+            CheckText text=checkTexts.get(serachIndex);
             if(text.inRange(touchX,touchY)){
                 switch (action){
                     case  MotionEvent.ACTION_DOWN:
@@ -252,7 +253,7 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
         }
 
         if(listener!=null&&hasExchange)
-            listener.onCheckedChange(this,text);
+            listener.onCheckedChange(this,serachIndex);
         return hasExchange;
     }
 
@@ -534,8 +535,8 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
         this.listener = listener;
     }
 
-    static interface CheckTextCheckedChangeListener{
-        void onCheckedChange(CheckTextGroupView view, CheckText radioText);
+    public static interface CheckTextCheckedChangeListener{
+        void onCheckedChange(CheckTextGroupView view, int postion);
     }
 
     /**
