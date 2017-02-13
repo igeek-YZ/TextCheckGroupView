@@ -5,22 +5,45 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!--<com.igeek.textcheckgroupview.CheckTextGroupView-->
+        <!--android:id="@+id/checkTextGroupView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:checkedStrokeColor="@color/colorPrimary"-->
+        <!--app:checkedTextColor="#009EF2"-->
+        <!--app:textPaddingLeft="16dp"-->
+        <!--app:textPaddingRight="16dp"-->
+        <!--app:textPaddingButtom="12dp"-->
+        <!--app:textPaddingTop="12dp"-->
+        <!--app:lineHeight="12dp"-->
+        <!--app:strokeModel="FILL_FILL"-->
+        <!--app:checkModel="MULTI"-->
+        <!--app:strokeWidth="1px"-->
+        <!--app:textGapWidth="10dp"-->
+        <!--app:textSize="16sp"-->
+        <!--app:unCheckedStrokeColor="@color/colorAccent"-->
+        <!--app:unCheckedTextColor="#66000000" />-->
+
     <com.igeek.textcheckgroupview.CheckTextGroupView
         android:id="@+id/checkTextGroupView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        app:checkModel="SIMPLE"
         app:checkedStrokeColor="@color/colorPrimary"
         app:checkedTextColor="#009EF2"
-        app:textPaddingLeft="16dp"
-        app:textPaddingRight="16dp"
-        app:textPaddingButtom="12dp"
-        app:textPaddingTop="12dp"
-        app:lineHeight="12dp"
+        app:lineHeight="16dp"
         app:strokeModel="FILL_FILL"
-        app:checkModel="MULTI"
         app:strokeWidth="1px"
-        app:textGapWidth="10dp"
-        app:textSize="16sp"
+        app:tagRadius="5dp"
+        app:textGapWidth="8dp"
+        app:textPaddingButtom="8dp"
+        app:textPaddingLeft="12dp"
+        app:textPaddingRight="12dp"
+        app:textPaddingTop="8dp"
+        app:textSize="14sp"
         app:unCheckedStrokeColor="@color/colorAccent"
         app:unCheckedTextColor="#66000000" />
 </LinearLayout>

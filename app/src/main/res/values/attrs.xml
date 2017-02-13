@@ -1,8 +1,7 @@
 <resources>
 
-
     <declare-styleable name="CheckTextGroupView">
-        <attr name="textSize" />
+        <attr name="textSize" format="dimension|reference"/>
         <attr name="textPadding" format="dimension|reference"/>
         <attr name="textPaddingLeft" format="dimension|reference"/>
         <attr name="textPaddingTop" format="dimension|reference"/>
@@ -14,12 +13,12 @@
         <attr name="unCheckedTextColor" format="color|reference"/>
         <attr name="checkedStrokeColor" format="color|reference"/>
         <attr name="unCheckedStrokeColor" format="color|reference"/>
-        <attr name="strokeWidth" />
+        <attr name="strokeWidth" format="dimension|reference" />
         <attr name="checkedDrawable" format="reference|color"/>
         <attr name="unCheckedDrawable" format="reference|color"/>
         <attr name="drawTextGapWidth" format="reference|dimension"/>
-        <attr name="drawableHeight" format="reference|dimension"/>
-        <attr name="drawableWidth" format="reference|dimension"/>
+        <attr name="drawableHeight" format="dimension|reference"/>
+        <attr name="drawableWidth" format="dimension|reference"/>
         <attr name="tagRadius" format="reference|dimension"/>
         <attr name="checkModel">
             <enum name="SIMPLE" value="6"/>

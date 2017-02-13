@@ -20,13 +20,12 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class CheckTextGroupView extends View implements View.OnTouchListener{
 
     private static final String TAG=CheckTextGroupView.class.getSimpleName();
 
-    private List<CheckText> checkTexts =new ArrayList<CheckText>();
-    private SparseArray<CheckText> checkeds=new SparseArray<CheckText>();
+    private List<CheckText> checkTexts =new ArrayList<CheckText>(0);
+    private SparseArray<CheckText> checkeds=new SparseArray<CheckText>(0);
 
     //文本字体大小
     private int textSize;
@@ -53,7 +52,7 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     //圆角半径
     private int tagRadius;
     //最多选择的个数
-    private int maxCheckSize;
+    private int maxCheckSize=1;
 
     //文本距离边框的填充间距
     private int textPadding;
@@ -143,7 +142,7 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
         }
 
         textSize =ta.getDimensionPixelSize(R.styleable.CheckTextGroupView_textSize,14);
-        tagRadius =ta.getDimensionPixelSize(R.styleable.CheckTextGroupView_tagRadius,10);
+        tagRadius =ta.getDimensionPixelSize(R.styleable.CheckTextGroupView_tagRadius,5);
         textGapWidth =ta.getDimensionPixelSize(R.styleable.CheckTextGroupView_textGapWidth,0);
         lineHeight=ta.getDimensionPixelSize(R.styleable.CheckTextGroupView_lineHeight,0);
         strokeWidth=ta.getDimensionPixelSize(R.styleable.CheckTextGroupView_strokeWidth,0);
@@ -272,14 +271,14 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
 
     }
 
-    public List<String> collectCheckedTexts(){
+    public List<CheckText> collectCheckedTexts(){
         if(checkeds.size()==0){
             return null;
         }
-        List<String> list=new ArrayList<String>();
+        List<CheckText> list=new ArrayList<CheckText>();
         for(int index=0;index<checkeds.size();index++){
             CheckText check=checkeds.valueAt(index);
-            list.add(check.getText());
+            list.add(check);
         }
         return list;
     }
@@ -298,6 +297,8 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
      * 重新计算每个文本的位置
      */
     public synchronized int mesureHeightByWithLayout(int width){
+
+        if(checkTexts==null||checkTexts.size()==0) return 0;
 
         //计算所有文本中的最大高度
         int maxHeight=computerMaxTextHeight();
@@ -381,6 +382,8 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     @Override
     protected void onDraw(Canvas canvas) {
 
+        if(checkTexts==null||checkTexts.size()==0) return ;
+
         for(CheckText text: checkTexts){
             drawTextBg(canvas,text);
             drawText(canvas,text);
@@ -404,8 +407,8 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
         strokeRectf.right=text.getCenterX()+halfWidth;
         strokeRectf.bottom=text.getCenterY()+halfHeight;
 
-        Logger.i("text="+text.getText()+"\ncenterX="+text.getCenterX()+"\ncenterY="+text.getCenterY()
-                +"\nleft="+strokeRectf.left+"\ntop="+strokeRectf.top+"\nright="+strokeRectf.right+"\nbottom="+strokeRectf.bottom);
+//        Log.i(TAG,"text="+text.getText()+"\ncenterX="+text.getCenterX()+"\ncenterY="+text.getCenterY()
+//                +"\nleft="+strokeRectf.left+"\ntop="+strokeRectf.top+"\nright="+strokeRectf.right+"\nbottom="+strokeRectf.bottom);
 
         //检查是否画边框
         if(strokeModel==STROKE){
@@ -474,9 +477,9 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     }
 
     public void updateCheckTexts(List<CheckText> checkTexts) {
-        this.checkTexts.clear();
-        this.checkTexts.addAll(checkTexts);
         if(checkTexts!=null&&checkTexts.size()>0){
+            this.checkTexts.clear();
+            this.checkTexts.addAll(checkTexts);
             /**
              * mesure()-->onmesure()-->layout()-->onlayout()-->dispatchDraw()-->Draw()-->onDraw();
              * 重新计算视图的宽高和绘制
@@ -635,7 +638,7 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     }
 
     public static interface CheckTextCheckedChangeListener{
-        void onCheckedChange(CheckTextGroupView view, List<String> checkedTexts);
+        void onCheckedChange(CheckTextGroupView view, List<CheckText> checkedTexts);
     }
 
     /**
@@ -697,6 +700,7 @@ public class CheckTextGroupView extends View implements View.OnTouchListener{
     }
 
     public void setMaxCheckSize(int maxCheckSize) {
+        if(maxCheckSize>checkTexts.size()) maxCheckSize=checkTexts.size();
         this.maxCheckSize = maxCheckSize;
     }
 
